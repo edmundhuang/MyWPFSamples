@@ -16,7 +16,7 @@ namespace MahAppsMetro.Samples
     {
         public App()
         {
-            var bs = new Bootstrap();
+            var bs = new Bootstrapper();
             bs.Run();
         }
     }

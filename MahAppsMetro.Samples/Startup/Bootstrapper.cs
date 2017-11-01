@@ -1,4 +1,5 @@
-﻿using MahAppsMetro.Samples.Views;
+﻿using MahAppsMetro.Samples.Core;
+using MahAppsMetro.Samples.Views;
 using Microsoft.Practices.Unity;
 using Prism.Unity;
 using System.Windows;
@@ -6,7 +7,7 @@ using System.Windows;
 
 namespace MahAppsMetro.Samples.Startup
 {
-    public class Bootstrap : UnityBootstrapper
+    public class Bootstrapper : UnityBootstrapper
     {
         protected override DependencyObject CreateShell()
         {
@@ -24,6 +25,8 @@ namespace MahAppsMetro.Samples.Startup
 
             Container.RegisterType(typeof(object), typeof(ViewA), "ViewA");
             Container.RegisterType(typeof(object), typeof(ViewB), "ViewB");
+
+            Container.RegisterType<Navigation>(new ContainerControlledLifetimeManager());
         }
     }
 }

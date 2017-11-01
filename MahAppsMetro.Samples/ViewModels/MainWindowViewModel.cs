@@ -13,16 +13,14 @@ namespace MahAppsMetro.Samples.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private IRegionManager _regionManger;
+        private Navigation _navigation;
 
-        public MainWindowViewModel(IRegionManager regionManager)
+        public MainWindowViewModel(IRegionManager regionManager, Navigation navigation)
         {
             _regionManger = regionManager;
-
-            ViewACommand = new DelegateCommand(ButtonAExecute, () => true);
-            ViewBCommand = new DelegateCommand(ButtonBExecute, () => true);
+            _navigation = navigation;
 
             NavigateCommand = new DelegateCommand<string>(Navigate);
-            
         }
 
         private void Navigate(string uri)
@@ -30,24 +28,11 @@ namespace MahAppsMetro.Samples.ViewModels
             _regionManger.RequestNavigate("ContentRegion", uri);
         }
 
-        private void ButtonBExecute()
-        {
-            CurrentView = new Views.ViewA();
-        }
-
-        private void ButtonAExecute()
-        {
-            throw new NotImplementedException();
-        }
-
         public string Title { get; set; }
 
         public String ContentRegion { get; set; }
 
         public object CurrentView { get; set; }
-
-        public ICommand ViewACommand { get; set; }
-        public ICommand ViewBCommand { get; set; }
 
         public DelegateCommand<string> NavigateCommand { get; set; }
 
