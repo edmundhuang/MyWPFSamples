@@ -9,16 +9,23 @@
         xmlns:core ="clr-namespace:MahAppsMetro.Samples.Core"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:vm="clr-namespace:MahAppsMetro.Samples.ViewModels"
+        xmlns:view="clr-namespace:MahAppsMetro.Samples.Views"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        BorderThickness="1"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        TextElement.FontWeight="Medium"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"   
         Title="{Binding Title}" MinHeight="600" MinWidth="800"
         Height="600" Width="800">
     <Grid>
         <Grid.Resources>
+            <core:SelectedItemToContentConverter x:Key="SelectedItemToContentConverter" />
             <DataTemplate x:Key="MenuItemTemplate"
-                          DataType="{x:Type core:MenuItem}">
+                          DataType="{x:Type core:MenuViewModel}">
                 <Grid Height="48">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="48" />
@@ -27,58 +34,65 @@
                     <ContentControl Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Foreground="White"
-                                    Focusable="False"
                                     Content="{Binding Icon}" />
                     <TextBlock Grid.Column="1"
                                VerticalAlignment="Center"
                                FontSize="16"
-                               Foreground="White"
                                Text="{Binding Text}" />
                 </Grid>
             </DataTemplate>
             <!--  Content  -->
-            <DataTemplate x:Key="ItemContentTemplate" DataType="{x:Type controls:HamburgerMenuItem}">
+            <DataTemplate x:Key="ItemContentTemplate" DataType="{x:Type controls:HamburgerMenu}">
                 <Grid x:Name="TheContentGrid">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="48" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <Border Grid.Row="0"
-                    Background="#FF444444">
+                    <Border Grid.Row="0">
                         <TextBlock x:Name="Header"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             FontSize="24"
-                            Foreground="White"
                             Text="{Binding Text}" />
                     </Border>
-                    <ContentControl x:Name="TheContent"
-                            Grid.Row="1"
-                            Focusable="False"
-                            Foreground="{DynamicResource BlackBrush}"
-                            Content="{Binding Tag}" />
+                    <ContentControl Content="{Binding CurrentView}" />
                 </Grid>
             </DataTemplate>
         </Grid.Resources>
         <controls:HamburgerMenu x:Name="HamburgerMenuControl"
-                                Foreground="White"
-                                PaneBackground="#FF444444"
                                 IsPaneOpen="False"
-                                ItemsSource="{Binding Menu}"
+                                PaneBackground="{DynamicResource AccentColorBrush}"
+                                BorderBrush="{DynamicResource AccentColorBrush}"
+                                ItemsSource="{Binding Menu}" 
                                 SelectedItem="{Binding SelectedMenuItem}"
                                 OptionsItemsSource="{Binding OptionsMenu}"
                                 ItemTemplate="{StaticResource MenuItemTemplate}"
                                 OptionsItemTemplate="{StaticResource MenuItemTemplate}"
-                                ContentTemplate="{StaticResource ItemContentTemplate}"
                                 DisplayMode="CompactInline">
+            <controls:HamburgerMenu.Content>
+                <Grid x:Name="TheContentGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0" Background="{DynamicResource AccentColorBrush}">
+                        <TextBlock x:Name="Header" 
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="24"
+                                       Foreground="{DynamicResource IdealForegroundColorBrush}"
+                                       Text="{Binding CurrentTitle}" />
+                    </Border>
+                    <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
+                </Grid>
+            </controls:HamburgerMenu.Content>
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="ItemClick">
                     <i:InvokeCommandAction Command="{Binding NavigateCommand}"
                                    CommandParameter="{Binding ElementName=HamburgerMenuControl, Path=SelectedItem}" />
                 </i:EventTrigger>
                 <i:EventTrigger EventName="OptionsItemClick">
-                    <i:InvokeCommandAction Command="{Binding YourViewModel.NavigateCommand}"
+                    <i:InvokeCommandAction Command="{Binding NavigateCommand}"
                                    CommandParameter="{Binding ElementName=HamburgerMenuControl, Path=SelectedOptionsItem}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>

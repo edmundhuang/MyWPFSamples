@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace MahAppsMetro.Samples.Core
 {
-    public class MenuItem :ViewModelBase
+    public class MenuViewModel : ViewModelBase
     {
         public object Icon { get; set; }
 

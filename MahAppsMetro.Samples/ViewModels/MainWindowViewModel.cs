@@ -6,16 +6,20 @@ using System;
 using System.Collections.ObjectModel;
 
 using MahApps.Metro.Controls;
+using System.Windows.Controls;
+using Microsoft.Practices.Unity;
+using MahAppsMetro.Samples.Views;
 
 namespace MahAppsMetro.Samples.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private IRegionManager _regionManger;
+        private IRegionManager _regionManager;
         private Navigation _navigation;
+        private IUnityContainer _container;
 
-        private static readonly ObservableCollection<MenuItem> AppMenu = new ObservableCollection<MenuItem>();
-        private static readonly ObservableCollection<MenuItem> AppOptionsMenu = new ObservableCollection<MenuItem>();
+        private static readonly ObservableCollection<MenuViewModel> AppMenu = new ObservableCollection<MenuViewModel>();
+        private static readonly ObservableCollection<MenuViewModel> AppOptionsMenu = new ObservableCollection<MenuViewModel>();
 
         private static readonly string appTitle = "客戶關係管理系統";
 
@@ -24,25 +28,50 @@ namespace MahAppsMetro.Samples.ViewModels
             BuildMenu();
         }
 
-        public MainWindowViewModel(IRegionManager regionManager, Navigation navigation)
+        public MainWindowViewModel(IRegionManager regionManager, Navigation navigation, IUnityContainer container)
         {
-            _regionManger = regionManager;
+            _regionManager = regionManager;
             _navigation = navigation;
+            _container = container;
+
             BuildMenu();
-            NavigateCommand = new DelegateCommand<object>(Navigate);
+            NavigateCommand = new DelegateCommand<MenuViewModel>(Navigate);
+
         }
 
-        public DelegateCommand<object> NavigateCommand { get; set; }
-        private void Navigate(object item)
+        public DelegateCommand<MenuViewModel> NavigateCommand { get; set; }
+        private void Navigate(MenuViewModel menuItem)
         {
-            MenuItem menuItem = (MenuItem)item;
-
-            _navigation.Navigate(menuItem.NavigationDestination);
+            //_navigation.Navigate(menuItem.NavigationDestination);
             //_regionManger.RequestNavigate("ContentRegion", uri);
+            //_navigation.Navigate(menuItem.NavigationDestination);
+
+            //var view = _container.Resolve<ViewA>();
+
+            //IRegion region = _regionManager.Regions["ContentRegion"];
+            //region.Add(view);
+
+            var uri = menuItem.NavigationDestination;
+
+            CurrentTitle = menuItem.Text;
+
+            try
+            {
+                var view = System.Windows.Application.LoadComponent(uri);
+                CurrentView = (UserControl)view;
+            }
+            catch { }
+           
+
+            //if ( uri != null)
+            //{
+
+            //}
+
         }
 
-        public ObservableCollection<MenuItem> Menu => AppMenu;
-        public ObservableCollection<MenuItem> OptionsMenu => AppOptionsMenu;
+        public ObservableCollection<MenuViewModel> Menu => AppMenu;
+        public ObservableCollection<MenuViewModel> OptionsMenu => AppOptionsMenu;
 
         private HamburgerMenuItem _selectedMenuItem;
         public HamburgerMenuItem SelectedMenuItem
@@ -57,6 +86,8 @@ namespace MahAppsMetro.Samples.ViewModels
                 if (value != _selectedMenuItem)
                 {
                     _selectedMenuItem = value;
+
+
                 }
             }
         }
@@ -65,19 +96,20 @@ namespace MahAppsMetro.Samples.ViewModels
 
         public String ContentRegion { get; set; }
 
-        public object CurrentView { get; set; }
+        public UserControl CurrentView { get; set; }
 
+        public String CurrentTitle { get; set; }
 
         private void BuildMenu()
         {
             // Build the menus
-            this.Menu.Add(new MenuItem() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.Bug }, Text = "Bugs", NavigationDestination = new Uri("Views/ViewA.xaml", UriKind.RelativeOrAbsolute) });
-            this.Menu.Add(new MenuItem() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.UserOutline }, Text = "User", NavigationDestination = new Uri("Views/ViewB.xaml", UriKind.RelativeOrAbsolute) });
-            this.Menu.Add(new MenuItem() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.Coffee }, Text = "Break" });
-            this.Menu.Add(new MenuItem() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.FontAwesome }, Text = "Awesome" });
+            this.Menu.Add(new MenuViewModel() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.Bug }, Text = "Bugs", NavigationDestination = new Uri(@"Views/ViewA.xaml", UriKind.RelativeOrAbsolute) });
+            this.Menu.Add(new MenuViewModel() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.UserOutline }, Text = "User", NavigationDestination = new Uri(@"Views/ViewB.xaml", UriKind.RelativeOrAbsolute) });
+            this.Menu.Add(new MenuViewModel() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.Coffee }, Text = "Break" });
+            this.Menu.Add(new MenuViewModel() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.FontAwesome }, Text = "Awesome" });
 
-            this.OptionsMenu.Add(new MenuItem() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.Cogs }, Text = "Settings" ,NavigationDestination = new Uri("Views/ViewA.xaml", UriKind.RelativeOrAbsolute) });
-            this.OptionsMenu.Add(new MenuItem() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.InfoCircle }, Text = "About" });
+            this.OptionsMenu.Add(new MenuViewModel() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.Cogs }, Text = "Settings", NavigationDestination = new Uri("Views/ViewA.xaml", UriKind.RelativeOrAbsolute) });
+            this.OptionsMenu.Add(new MenuViewModel() { Icon = new PackIconFontAwesome() { Kind = PackIconFontAwesomeKind.InfoCircle }, Text = "About" });
         }
     }
 }
