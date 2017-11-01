@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MahAppsMetro.Samples.Startup;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,10 @@ namespace MahAppsMetro.Samples
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            var bs = new Bootstrap();
+            bs.Run();
+        }
     }
 }
