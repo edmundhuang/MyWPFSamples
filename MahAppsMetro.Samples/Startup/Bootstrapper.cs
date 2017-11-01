@@ -3,7 +3,7 @@ using MahAppsMetro.Samples.Views;
 using Microsoft.Practices.Unity;
 using Prism.Unity;
 using System.Windows;
-
+using System.Windows.Controls;
 
 namespace MahAppsMetro.Samples.Startup
 {
@@ -27,6 +27,7 @@ namespace MahAppsMetro.Samples.Startup
             Container.RegisterType(typeof(object), typeof(ViewB), "ViewB");
 
             Container.RegisterType<Navigation>(new ContainerControlledLifetimeManager());
+            Container.RegisterType<Frame>(new ContainerControlledLifetimeManager());
         }
     }
 }

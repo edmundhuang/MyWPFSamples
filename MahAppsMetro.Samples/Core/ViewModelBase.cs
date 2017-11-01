@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿#pragma warning disable 
+using System.ComponentModel;
 
 namespace MahAppsMetro.Samples.Core
 {

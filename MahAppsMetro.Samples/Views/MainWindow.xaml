@@ -1,14 +1,19 @@
-﻿<Window x:Class="MahAppsMetro.Samples.Views.MainWindow"
+﻿<controls:MetroWindow x:Class="MahAppsMetro.Samples.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:local="clr-namespace:MahAppsMetro.Samples"
         xmlns:core ="clr-namespace:MahAppsMetro.Samples.Core"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:vm="clr-namespace:MahAppsMetro.Samples.ViewModels"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel, IsDesignTimeCreatable=True}"
         prism:ViewModelLocator.AutoWireViewModel="True"
-        Title="MainWindows" MinHeight="600" MinWidth="800"
+        BorderThickness="1"
+        Title="{Binding Title}" MinHeight="600" MinWidth="800"
         Height="600" Width="800">
     <Grid>
         <Grid.Resources>
@@ -32,18 +37,53 @@
                                Text="{Binding Text}" />
                 </Grid>
             </DataTemplate>
+            <!--  Content  -->
+            <DataTemplate x:Key="ItemContentTemplate" DataType="{x:Type controls:HamburgerMenuItem}">
+                <Grid x:Name="TheContentGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="48" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Border Grid.Row="0"
+                    Background="#FF444444">
+                        <TextBlock x:Name="Header"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="24"
+                            Foreground="White"
+                            Text="{Binding Text}" />
+                    </Border>
+                    <ContentControl x:Name="TheContent"
+                            Grid.Row="1"
+                            Focusable="False"
+                            Foreground="{DynamicResource BlackBrush}"
+                            Content="{Binding Tag}" />
+                </Grid>
+            </DataTemplate>
         </Grid.Resources>
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-            <Button Margin="5" Command="{Binding NavigateCommand}" CommandParameter="ViewA">ViewA</Button>
-            <Button Margin="5" Command="{Binding NavigateCommand}" CommandParameter="ViewB">ViewB</Button>
-        </StackPanel>
-        <ContentControl Grid.Row="1" prism:RegionManager.RegionName="ContentRegion"></ContentControl>
+        <controls:HamburgerMenu x:Name="HamburgerMenuControl"
+                                Foreground="White"
+                                PaneBackground="#FF444444"
+                                IsPaneOpen="False"
+                                ItemsSource="{Binding Menu}"
+                                SelectedItem="{Binding SelectedMenuItem}"
+                                OptionsItemsSource="{Binding OptionsMenu}"
+                                ItemTemplate="{StaticResource MenuItemTemplate}"
+                                OptionsItemTemplate="{StaticResource MenuItemTemplate}"
+                                ContentTemplate="{StaticResource ItemContentTemplate}"
+                                DisplayMode="CompactInline">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="ItemClick">
+                    <i:InvokeCommandAction Command="{Binding NavigateCommand}"
+                                   CommandParameter="{Binding ElementName=HamburgerMenuControl, Path=SelectedItem}" />
+                </i:EventTrigger>
+                <i:EventTrigger EventName="OptionsItemClick">
+                    <i:InvokeCommandAction Command="{Binding YourViewModel.NavigateCommand}"
+                                   CommandParameter="{Binding ElementName=HamburgerMenuControl, Path=SelectedOptionsItem}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </controls:HamburgerMenu>
     </Grid>
-</Window>
+</controls:MetroWindow>
 
     
